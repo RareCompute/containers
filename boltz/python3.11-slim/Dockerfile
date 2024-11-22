@@ -13,9 +13,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   python3-venv \
   && python3 -m venv /opt/venv \
   && . /opt/venv/bin/activate \
-  && pip install --no-cache-dir --upgrade pip \
-  && pip install --no-cache-dir boltz \
   && git clone https://github.com/jwohlwend/boltz.git /app \
+  && pip install --no-cache-dir --upgrade pip \
+  && pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu \
+  && pip install --no-cache-dir boltz \
   && apt-get purge -y git build-essential \
   && apt-get autoremove -y \
   && apt-get clean \

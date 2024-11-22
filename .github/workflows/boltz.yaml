@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       image_tag:
-        description: "Tag for the image, e.g. boltz makes boltz-slim, boltz-cuda118 and boltz-cuda121"
+        description: "Tag for the image, e.g. boltz makes boltz, boltz-cuda118 and boltz-cuda121"
         required: false
         default: "boltz"
 
@@ -70,7 +70,7 @@ jobs:
         with:
           context: boltz/11.8.0-cudnn8-runtime-ubuntu22.04
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.image_tag }}-cuda118
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.image_tag }}-cu118
           build-args: BASE_IMAGE=nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
   build-boltz-cuda121:
     #if: "!contains(github.event.head_commit.message, '[no-ci]')"
@@ -100,5 +100,5 @@ jobs:
         with:
           context: boltz/12.1.0-cudnn8-runtime-ubuntu22.04
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.image_tag }}-cuda121
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.image_tag }}-cu121
           build-args: BASE_IMAGE=nvidia/cuda:12.1.0-cudnn8-runtime-ubuntu22.04

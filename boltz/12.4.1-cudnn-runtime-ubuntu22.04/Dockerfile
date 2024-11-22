@@ -2,7 +2,7 @@
 # ----------------------
 ARG PROJECT_NAME=boltz
 ARG PROJECT_URL=https://github.com/jwohlwend/boltz.git
-ARG BASE_IMAGE=nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
+ARG BASE_IMAGE=nvidia/cuda:12.1.0-cudnn8-runtime-ubuntu22.04
 FROM ${BASE_IMAGE} AS builder
 
 # Build
@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && . /opt/venv/bin/activate \
   && git clone https://github.com/jwohlwend/boltz.git /app \
   && pip install --no-cache-dir --upgrade pip \
-  && pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 \
+  && pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124 \
   && pip install --no-cache-dir boltz \
   && apt-get purge -y git build-essential \
   && apt-get autoremove -y \
