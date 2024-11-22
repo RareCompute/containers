@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && . /opt/venv/bin/activate \
   && git clone https://github.com/artidoro/qlora /app \
   && pip install --no-cache-dir --upgrade pip \
-  && pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124 \
+  && pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124 \
   && pip install --no-cache-dir -r /app/requirements.txt \
   && apt-get purge -y git build-essential \
   && apt-get autoremove -y \
@@ -52,11 +52,6 @@ RUN groupadd --gid $USER_GID $USERNAME && \
 
 COPY --from=builder --chown=$USER_UID:$USER_GID /opt/venv /opt/venv
 COPY --from=builder --chown=$USER_UID:$USER_GID /app /app
-COPY --from=builder --chown=$USER_UID:$USER_GID /app/LICENSE /app/LICENSE
-COPY --from=builder --chown=$USER_UID:$USER_GID /app/README.md /app/README.md
-COPY --from=builder --chown=$USER_UID:$USER_GID /app/docs /app/docs
-COPY --from=builder --chown=$USER_UID:$USER_GID /app/examples /app/examples
-COPY --from=builder --chown=$USER_UID:$USER_GID /app/scripts /app/scripts
 
 WORKDIR /app
 USER $USERNAME

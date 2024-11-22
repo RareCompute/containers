@@ -52,11 +52,6 @@ RUN groupadd --gid $USER_GID $USERNAME && \
 
 COPY --from=builder --chown=$USER_UID:$USER_GID /opt/venv /opt/venv
 COPY --from=builder --chown=$USER_UID:$USER_GID /app /app
-COPY --from=builder --chown=$USER_UID:$USER_GID /app/LICENSE /app/LICENSE
-COPY --from=builder --chown=$USER_UID:$USER_GID /app/README.md /app/README.md
-COPY --from=builder --chown=$USER_UID:$USER_GID /app/docs /app/docs
-COPY --from=builder --chown=$USER_UID:$USER_GID /app/examples /app/examples
-COPY --from=builder --chown=$USER_UID:$USER_GID /app/scripts /app/scripts
 
 WORKDIR /app
 USER $USERNAME
