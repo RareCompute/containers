@@ -3,7 +3,7 @@
 ARG PROJECT_NAME=qlora
 ARG PROJECT_URL=https://github.com/artidoro/qlora
 ARG BASE_IMAGE=nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
-FROM ${BASE_IMAGE} AS builder
+FROM python:3.11-slim AS builder
 
 # Build
 # ----------------------
