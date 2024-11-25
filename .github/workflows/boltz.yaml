@@ -13,7 +13,7 @@ env:
   IMAGE_NAME: boltz
 
 jobs:
-  build-boltz-cpu:
+  build-boltz:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -22,8 +22,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set repository owner
+        id: set_repo_owner_lower
+        shell: bash
+        run: |
+          echo "REPOSITORY_OWNER=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v3
         with:
           platforms: arm64,amd64
 
@@ -39,7 +45,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            ${{ env.REGISTRY }}/${{ github.actor }}/${{ env.IMAGE_NAME }}
+            ${{ env.REGISTRY }}/${{ env.REPOSITORY_OWNER }}/${{ env.IMAGE_NAME }}
           flavor: latest=auto
           tags: type=raw,value=latest,enable={{is_default_branch}}
 
@@ -52,128 +58,130 @@ jobs:
           push: true
           platforms: arm64,amd64
           context: ./${{ env.IMAGE_NAME }}/python3.11-slim
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.image_tag }}
+          tags: ${{ env.REGISTRY }}/${{ env.REPOSITORY_OWNER }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.image_tag }}
           build-args: BASE_IMAGE=python:3.11-slim
-  build-boltz-cuda118:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-        with:
-          platforms: arm64,amd64
-
-      - name: Login to the container registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract image metadata
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: |
-            ${{ env.REGISTRY }}/${{ github.actor }}/${{ env.IMAGE_NAME }}
-          flavor: latest=auto
-          tags: type=raw,value=latest,enable={{is_default_branch}}
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          push: true
-          platforms: arm64,amd64
-          context: ./${{ env.IMAGE_NAME }}/11.8.0-cudnn8-runtime-ubuntu22.04
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.image_tag }}-cu118
-          build-args: BASE_IMAGE=nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
-  build-boltz-cuda121:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-        with:
-          platforms: arm64,amd64
-
-      - name: Login to the container registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract image metadata
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: |
-            ${{ env.REGISTRY }}/${{ github.actor }}/${{ env.IMAGE_NAME }}
-          flavor: latest=auto
-          tags: type=raw,value=latest,enable={{is_default_branch}}
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          push: true
-          platforms: arm64,amd64
-          context: ./${{ env.IMAGE_NAME }}/12.1.0-cudnn8-runtime-ubuntu22.04
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.image_tag }}-cu121
-          build-args: BASE_IMAGE=nvidia/cuda:12.1.0-cudnn8-runtime-ubuntu22.04
-  build-boltz-cuda124:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-        with:
-          platforms: arm64,amd64
-
-      - name: Login to the container registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract image metadata
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: |
-            ${{ env.REGISTRY }}/${{ github.actor }}/${{ env.IMAGE_NAME }}
-          flavor: latest=auto
-          tags: type=raw,value=latest,enable={{is_default_branch}}
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          push: true
-          platforms: arm64,amd64
-          context: ./${{ env.IMAGE_NAME }}/12.4.1-cudnn-runtime-ubuntu22.04
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.image_tag }}-cu124
-          build-args: BASE_IMAGE=nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
+  # TODO: Make sure the below items include the updated REPOSITORY_OWNER format
+  # TODO: Github Actions Runners can't support the disk space required for these builds. We don't _need_ them but it'd be nice if they were working
+  #  build-boltz-cuda118:
+  #    runs-on: ubuntu-latest
+  #    permissions:
+  #      contents: read
+  #      packages: write
+  #    steps:
+  #      - name: Checkout repository
+  #        uses: actions/checkout@v4
+  #
+  #      - name: Set up QEMU
+  #        uses: docker/setup-qemu-action@v3
+  #        with:
+  #          platforms: arm64,amd64
+  #
+  #      - name: Login to the container registry
+  #        uses: docker/login-action@v3
+  #        with:
+  #          registry: ${{ env.REGISTRY }}
+  #          username: ${{ github.actor }}
+  #          password: ${{ secrets.GITHUB_TOKEN }}
+  #
+  #      - name: Extract image metadata
+  #        id: meta
+  #        uses: docker/metadata-action@v4
+  #        with:
+  #          images: |
+  #            ${{ env.REGISTRY }}/${{ github.actor }}/${{ env.IMAGE_NAME }}
+  #          flavor: latest=auto
+  #          tags: type=raw,value=latest,enable={{is_default_branch}}
+  #
+  #      - name: Set up Docker Buildx
+  #        uses: docker/setup-buildx-action@v3
+  #
+  #      - name: Build and push Docker image
+  #        uses: docker/build-push-action@v6
+  #        with:
+  #          push: true
+  #          platforms: arm64,amd64
+  #          context: ./${{ env.IMAGE_NAME }}/11.8.0-cudnn8-runtime-ubuntu22.04
+  #          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.image_tag }}-cu118
+  #          build-args: BASE_IMAGE=nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
+  #  build-boltz-cuda121:
+  #    runs-on: ubuntu-latest
+  #    permissions:
+  #      contents: read
+  #      packages: write
+  #    steps:
+  #      - name: Checkout repository
+  #        uses: actions/checkout@v4
+  #
+  #      - name: Set up QEMU
+  #        uses: docker/setup-qemu-action@v3
+  #        with:
+  #          platforms: arm64,amd64
+  #
+  #      - name: Login to the container registry
+  #        uses: docker/login-action@v3
+  #        with:
+  #          registry: ${{ env.REGISTRY }}
+  #          username: ${{ github.actor }}
+  #          password: ${{ secrets.GITHUB_TOKEN }}
+  #
+  #      - name: Extract image metadata
+  #        id: meta
+  #        uses: docker/metadata-action@v4
+  #        with:
+  #          images: |
+  #            ${{ env.REGISTRY }}/${{ github.actor }}/${{ env.IMAGE_NAME }}
+  #          flavor: latest=auto
+  #          tags: type=raw,value=latest,enable={{is_default_branch}}
+  #
+  #      - name: Set up Docker Buildx
+  #        uses: docker/setup-buildx-action@v3
+  #
+  #      - name: Build and push Docker image
+  #        uses: docker/build-push-action@v6
+  #        with:
+  #          push: true
+  #          platforms: arm64,amd64
+  #          context: ./${{ env.IMAGE_NAME }}/12.1.0-cudnn8-runtime-ubuntu22.04
+  #          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.image_tag }}-cu121
+  #          build-args: BASE_IMAGE=nvidia/cuda:12.1.0-cudnn8-runtime-ubuntu22.04
+  #  build-boltz-cuda124:
+  #    runs-on: ubuntu-latest
+  #    permissions:
+  #      contents: read
+  #      packages: write
+  #    steps:
+  #      - name: Checkout repository
+  #        uses: actions/checkout@v4
+  #
+  #      - name: Set up QEMU
+  #        uses: docker/setup-qemu-action@v3
+  #        with:
+  #          platforms: arm64,amd64
+  #
+  #      - name: Login to the container registry
+  #        uses: docker/login-action@v3
+  #        with:
+  #          registry: ${{ env.REGISTRY }}
+  #          username: ${{ github.actor }}
+  #          password: ${{ secrets.GITHUB_TOKEN }}
+  #
+  #      - name: Extract image metadata
+  #        id: meta
+  #        uses: docker/metadata-action@v4
+  #        with:
+  #          images: |
+  #            ${{ env.REGISTRY }}/${{ github.actor }}/${{ env.IMAGE_NAME }}
+  #          flavor: latest=auto
+  #          tags: type=raw,value=latest,enable={{is_default_branch}}
+  #
+  #      - name: Set up Docker Buildx
+  #        uses: docker/setup-buildx-action@v3
+  #
+  #      - name: Build and push Docker image
+  #        uses: docker/build-push-action@v6
+  #        with:
+  #          push: true
+  #          platforms: arm64,amd64
+  #          context: ./${{ env.IMAGE_NAME }}/12.4.1-cudnn-runtime-ubuntu22.04
+  #          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.image_tag }}-cu124
+  #          build-args: BASE_IMAGE=nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
