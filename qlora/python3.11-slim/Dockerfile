@@ -55,4 +55,4 @@ COPY --from=builder --chown=$USER_UID:$USER_GID /app /app
 
 WORKDIR /app
 USER $USERNAME
-ENTRYPOINT ["qlora"]
+ENTRYPOINT ["python /app/qlora.py"]
