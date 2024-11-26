@@ -1,3 +1,7 @@
+# NOTE: Unfortunately, as far as I know, these need to either be
+#       separate jobs or we need to use our own CI runner. Github
+#       Actions doesn't provide enough disk space by default.
+
 name: Build and push QLoRA
 
 on:
@@ -28,10 +32,10 @@ jobs:
         run: |
           echo "REPOSITORY_OWNER=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-        with:
-          platforms: arm64,amd64
+      #      - name: Set up QEMU
+      #        uses: docker/setup-qemu-action@v3
+      #        with:
+      #          platforms: arm64,amd64
 
       - name: Login to the container registry
         uses: docker/login-action@v3
@@ -56,14 +60,13 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          platforms: arm64,amd64
+          #platforms: arm64,amd64
           context: ./${{ env.IMAGE_NAME }}/python3.11-slim
           tags: ${{ env.REGISTRY }}/${{ env.REPOSITORY_OWNER }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.image_tag }}
           build-args: BASE_IMAGE=python:3.11-slim
-  # TODO: Make sure the below items include the updated REPOSITORY_OWNER format
-  # TODO: Github Actions Runners can't support the disk space required for these builds. We don't _need_ them but it'd be nice if they were working
-  #  build-qlora-cuda118:
-  #    runs-on: ubuntu-latest
+  #  build-qlora-cu118:
+  #    #runs-on: ubuntu-latest
+  #    runs-on: big-storage
   #    permissions:
   #      contents: read
   #      packages: write
@@ -77,10 +80,10 @@ jobs:
   #        run: |
   #          echo "REPOSITORY_OWNER=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
   #
-  #      - name: Set up QEMU
-  #        uses: docker/setup-qemu-action@v3
-  #        with:
-  #          platforms: arm64,amd64
+  #      #      - name: Set up QEMU
+  #      #        uses: docker/setup-qemu-action@v3
+  #      #        with:
+  #      #          platforms: arm64,amd64
   #
   #      - name: Login to the container registry
   #        uses: docker/login-action@v3
@@ -105,11 +108,11 @@ jobs:
   #        uses: docker/build-push-action@v6
   #        with:
   #          push: true
-  #          platforms: arm64,amd64
+  #          #platforms: arm64,amd64
   #          context: ./${{ env.IMAGE_NAME }}/11.8.0-cudnn8-runtime-ubuntu22.04
   #          tags: ${{ env.REGISTRY }}/${{ env.REPOSITORY_OWNER }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.image_tag }}
   #          build-args: BASE_IMAGE=nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
-  #  build-qlora-cuda121:
+  #  build-qlora-cu121:
   #    runs-on: ubuntu-latest
   #    permissions:
   #      contents: read
@@ -118,13 +121,16 @@ jobs:
   #      - name: Checkout repository
   #        uses: actions/checkout@v4
   #
-  #      #      - name: Convert repository name to lowercase
-  #      #        run: echo "IMAGE_NAME=$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+  #      - name: Set repository owner
+  #        id: set_repo_owner_lower
+  #        shell: bash
+  #        run: |
+  #          echo "REPOSITORY_OWNER=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
   #
-  #      - name: Set up QEMU
-  #        uses: docker/setup-qemu-action@v3
-  #        with:
-  #          platforms: arm64,amd64
+  #      #      - name: Set up QEMU
+  #      #        uses: docker/setup-qemu-action@v3
+  #      #        with:
+  #      #          platforms: arm64,amd64
   #
   #      - name: Login to the container registry
   #        uses: docker/login-action@v3
@@ -138,7 +144,7 @@ jobs:
   #        uses: docker/metadata-action@v4
   #        with:
   #          images: |
-  #            ${{ env.REGISTRY }}/${{ github.actor }}/${{ env.IMAGE_NAME }}
+  #            ${{ env.REGISTRY }}/${{ env.REPOSITORY_OWNER }}/${{ env.IMAGE_NAME }}
   #          flavor: latest=auto
   #          tags: type=raw,value=latest,enable={{is_default_branch}}
   #
@@ -149,51 +155,54 @@ jobs:
   #        uses: docker/build-push-action@v6
   #        with:
   #          push: true
-  #          platforms: arm64,amd64
+  #          #platforms: arm64,amd64
   #          context: ./${{ env.IMAGE_NAME }}/12.1.0-cudnn8-runtime-ubuntu22.04
-  #          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.image_tag }}-cu121
+  #          tags: ${{ env.REGISTRY }}/${{ env.REPOSITORY_OWNER }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.image_tag }}-cu121
   #          build-args: BASE_IMAGE=nvidia/cuda:12.1.0-cudnn8-runtime-ubuntu22.04
-  #  build-qlora-cuda124:
-  #    runs-on: ubuntu-latest
-  #    permissions:
-  #      contents: read
-  #      packages: write
-  #    steps:
-  #      - name: Checkout repository
-  #        uses: actions/checkout@v4
-  #
-  #      #      - name: Convert repository name to lowercase
-  #      #        run: echo "IMAGE_NAME=$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
-  #
-  #      - name: Set up QEMU
-  #        uses: docker/setup-qemu-action@v3
-  #        with:
-  #          platforms: arm64,amd64
-  #
-  #      - name: Login to the container registry
-  #        uses: docker/login-action@v3
-  #        with:
-  #          registry: ${{ env.REGISTRY }}
-  #          username: ${{ github.actor }}
-  #          password: ${{ secrets.GITHUB_TOKEN }}
-  #
-  #      - name: Extract image metadata
-  #        id: meta
-  #        uses: docker/metadata-action@v4
-  #        with:
-  #          images: |
-  #            ${{ env.REGISTRY }}/${{ github.actor }}/${{ env.IMAGE_NAME }}
-  #          flavor: latest=auto
-  #          tags: type=raw,value=latest,enable={{is_default_branch}}
-  #
-  #      - name: Set up Docker Buildx
-  #        uses: docker/setup-buildx-action@v3
-  #
-  #      - name: Build and push Docker image
-  #        uses: docker/build-push-action@v6
-  #        with:
-  #          push: true
-  #          platforms: arm64,amd64
-  #          context: ./${{ env.IMAGE_NAME }}/12.4.1-cudnn-runtime-ubuntu22.04
-  #          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.image_tag }}-cu124
-  #          build-args: BASE_IMAGE=nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
+  build-qlora-cu124:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set repository owner
+        id: set_repo_owner_lower
+        shell: bash
+        run: |
+          echo "REPOSITORY_OWNER=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+      #      - name: Set up QEMU
+      #        uses: docker/setup-qemu-action@v3
+      #        with:
+      #          platforms: arm64,amd64
+
+      - name: Login to the container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract image metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ${{ env.REGISTRY }}/${{ env.REPOSITORY_OWNER }}/${{ env.IMAGE_NAME }}
+          flavor: latest=auto
+          tags: type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          #platforms: arm64,amd64
+          context: ./${{ env.IMAGE_NAME }}/12.4.1-cudnn-runtime-ubuntu22.04
+          tags: ${{ env.REGISTRY }}/${{ env.REPOSITORY_OWNER }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.image_tag }}-cu124
+          build-args: BASE_IMAGE=nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04

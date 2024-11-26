@@ -3,13 +3,14 @@
 ARG PROJECT_NAME=qlora
 ARG PROJECT_URL=https://github.com/artidoro/qlora
 ARG BASE_IMAGE=nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
-FROM python:3.11-slim AS builder
+FROM ${BASE_IMAGE} AS builder
 
 # Build
 # ----------------------
 RUN apt-get update && apt-get install -y --no-install-recommends \
   git \
   build-essential \
+  python3 \
   python3-venv \
   && python3 -m venv /opt/venv \
   && . /opt/venv/bin/activate \
@@ -48,11 +49,15 @@ ENV PATH="/opt/venv/bin:$PATH"
 # Installation
 # ----------------------
 RUN groupadd --gid $USER_GID $USERNAME && \
-  useradd --uid $USER_UID --gid $USER_GID --create-home --shell /bin/bash $USERNAME
+  useradd --uid $USER_UID --gid $USER_GID --create-home --shell /bin/bash $USERNAME \
+  && apt-get update && apt-get install -y --no-install-recommends python3 \
+  && apt-get autoremove -y \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 COPY --from=builder --chown=$USER_UID:$USER_GID /opt/venv /opt/venv
 COPY --from=builder --chown=$USER_UID:$USER_GID /app /app
 
 WORKDIR /app
 USER $USERNAME
-ENTRYPOINT ["qlora"]
+ENTRYPOINT ["python /app/qlora.py"]
