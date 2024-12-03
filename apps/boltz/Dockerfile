@@ -28,7 +28,6 @@ ENV \
 USER root
 WORKDIR /app
 
-# TODO: Add uv
 RUN \
   groupadd --gid ${GID} ${USERNAME} \
   && useradd --uid ${UID} --gid ${GID} --create-home --shell /bin/bash ${USERNAME} \
@@ -64,6 +63,7 @@ RUN \
   && rm -rf /root/.cache /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 COPY --chown=${UID}:${GID} ./apps/boltz/entrypoint.sh /entrypoint.sh
+RUN chmod -R 755 /entrypoint.sh
 
 USER ${USERNAME}
 WORKDIR /cache
@@ -71,5 +71,7 @@ VOLUME ["/cache"]
 
 WORKDIR /data
 VOLUME ["/data"]
+
+WORKDIR /app
 
 ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]

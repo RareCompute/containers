@@ -23,7 +23,7 @@ function git_current_branch {
 function gwip {
   git add -A
   git rm $(git ls-files --deleted) 2> /dev/null
-  git commit --no-gpg-sign -m "--wip-- [skipci]"
+  git commit --no-gpg-sign -m "--wip--"
 }
 
 function gunwip {

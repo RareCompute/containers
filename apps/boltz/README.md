@@ -1,7 +1,5 @@
 # Boltz
 
-By default the image will attempt a prediction based on the provided flags and input. If you want to create a shell pod, i.e. research environment, you can pass `SHELL: true`
-
 Attach a volume for data and models by referencing `/cache` and for generated predictions by referencing `/predictions`
 
 From the [upstream repository](https://github.com/jwohlwend/boltz/tree/main):
@@ -14,10 +12,9 @@ You can configure the docker image using the below environment variables
 
 | Environment Variable   | CLI Flag                 | Type                 | Default Value               | Description                                                         |
 | ---------------------- | ------------------------ | -------------------- | --------------------------- | ------------------------------------------------------------------- |
-| `SHELL`                | N/A                      | `FLAG`               | `False`                     | Start docker container as a shell                                   |
 | `USERNAME`             | N/A                      | `STR`                | `rare`                      | Username for the container                                          |
-| `UID`                  | N/A                      | `INTEGER`            | `900`                       | UID to use for the container                                        |
-| `GID`                  | N/A                      | `INTEGER`            | `900`                       | GID to use for the container                                        |
+| `UID`                  | N/A                      | `INTEGER`            | `900`                       | UID for the container                                               |
+| `GID`                  | N/A                      | `INTEGER`            | `900`                       | GID for the container                                               |
 | `DATA_PATH`            | `--out_dir`              | `PATH`               | `/data`                     | The path where predictions will be saved.                           |
 | `CACHE_PATH`           | `--cache`                | `PATH`               | `/cache`                    | The directory for downloading data and models.                      |
 | `DEVICE_TYPE`          | `--accelerator`          | `[gpu, cpu, tpu]`    | `gpu`                       | The type of accelerator to use for predictions.                     |
