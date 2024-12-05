@@ -24,7 +24,12 @@ declare -A FLAG_MAP=(
 
 for VAR in "${!FLAG_MAP[@]}"; do
     if [ -n "${!VAR}" ]; then
-        EXTRA_FLAGS+=" ${FLAG_MAP[$VAR]} ${!VAR}"
+        VALUE_LOWER=$(echo "${!VAR}" | tr '[:upper:]' '[:lower:]')
+        if [[ "$VALUE_LOWER" == "true" ]]; then
+            EXTRA_FLAGS+=" ${FLAG_MAP[$VAR]}"
+        elif [[ "$VALUE_LOWER" != "false" ]]; then
+            EXTRA_FLAGS+=" ${FLAG_MAP[$VAR]} ${!VAR}"
+        fi
     fi
 done
 
