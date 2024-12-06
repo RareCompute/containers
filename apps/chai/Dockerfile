@@ -11,8 +11,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 ENV \
   NVIDIA_DRIVER_CAPABILITIES="compute,video,utility,graphics" \
-  VIRTUAL_ENV=/opt/venv \
-  PATH="${VIRTUAL_ENV}:$PATH" \
+  PATH="/opt/venv/bin:$PATH" \
   UMASK="0002" \
   LANG=C.UTF-8 \
   TZ="Etc/UTC" \
@@ -58,10 +57,12 @@ RUN \
   && chown -R ${UID}:${GID} /app && chmod -R 755 /app \
   && curl -LsSf https://astral.sh/uv/0.5.6/install.sh | sh \
   && . $HOME/.local/bin/env \
-  && uv venv --no-python-downloads ${VIRTUAL_ENV} \
-  && . ${VIRTUAL_ENV}/bin/activate \
+  && uv venv --no-python-downloads /opt/venv \
+  && . /opt/venv/bin/activate \
+  && cd /tmp/app/chai-lab-${VERSION} \
   && uv pip install -r /tmp/app/chai-lab-${VERSION}/requirements.in \
-  && chown -R ${UID}:${GID} ${VIRTUAL_ENV}  && chmod -R 755 ${VIRTUAL_ENV} \
+  && uv pip install . \
+  && chown -R ${UID}:${GID} /opt/venv && chmod -R 755 /opt/venv \
   && apt-get purge -y build-essential \
   && apt-get autoremove -y \
   && apt-get clean \
