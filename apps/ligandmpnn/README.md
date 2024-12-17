@@ -1,4 +1,4 @@
-# Chai
+# LigandMPNN
 
 From the [upstream repository](https://github.com/dauparas/LigandMPNN):
 
