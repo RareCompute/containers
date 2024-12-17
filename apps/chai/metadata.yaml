@@ -9,3 +9,9 @@ channels:
     tests:
       enabled: false
       type: cli
+  - name: develop
+    platforms: ["linux/amd64"]
+    stable: false
+    tests:
+      enabled: false
+      type: cli
