@@ -16,3 +16,4 @@ if [[ "${channel}" == "develop" ]]; then
   rm -rf /tmp/chai
   printf "%s" "${version}"
 fi
+

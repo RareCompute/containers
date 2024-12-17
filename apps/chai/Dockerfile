@@ -36,7 +36,7 @@ RUN \
   && apt-get update && apt-get install -y --no-install-recommends \
   curl unzip build-essential catatonit jq \
   gnupg ca-certificates lsb-release \
-  nano vim tree \
+  nano vim tree git \
   # -----------------------------------
   # TODO: Build images with extras
   # -----------------------------------
@@ -47,10 +47,9 @@ RUN \
   # -----------------------------------
   # libibverbs1 librdmacm1 \
   # -----------------------------------
-  && \
-  case "${CHANNEL}" in \
+  && case "${CHANNEL}" in \
   'stable') \
-  && curl -fsSL -o /tmp/app.zip "https://github.com/chaidiscovery/chai-lab/archive/refs/tags/v${VERSION}.zip" \
+  curl -fsSL -o /tmp/app.zip "https://github.com/chaidiscovery/chai-lab/archive/refs/tags/v${VERSION}.zip" \
   && unzip -q /tmp/app.zip -d /tmp/app \
   && cp -R /tmp/app/chai-lab-${VERSION}/LICENSE /app \
   && cp -R /tmp/app/chai-lab-${VERSION}/assets /app \
@@ -58,7 +57,7 @@ RUN \
   && cp -R /tmp/app/chai-lab-${VERSION}/tests /app \
   ;; \
   'develop') \
-  && git clone https://github.com/amelie-iska/chai-lab.git /tmp/chai \
+  git clone https://github.com/amelie-iska/chai-lab.git /tmp/chai \
   && cp -R /tmp/chai/LICENSE /app \
   && cp -R /tmp/chai/assets /app \
   && cp -R /tmp/chai/examples /app \
