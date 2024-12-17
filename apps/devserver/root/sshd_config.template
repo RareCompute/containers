@@ -15,3 +15,5 @@ HostbasedAuthentication no
 AllowGroups ssh
 PrintMotd yes
 PrintLastLog no
+
+Subsystem sftp /usr/lib/openssh/sftp-server
