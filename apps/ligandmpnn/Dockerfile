@@ -1,4 +1,4 @@
-FROM docker.io/library/python:3.12-slim-bookworm
+FROM docker.io/library/python:3.11-slim-bookworm
 
 LABEL \
   maintainer="Liana64" \
@@ -37,7 +37,7 @@ RUN \
   curl unzip build-essential catatonit jq \
   gnupg ca-certificates lsb-release \
   nano vim tree git \
-  git clone https://github.com/dauparas/LigandMPNN /tmp/app \
+  && git clone https://github.com/dauparas/LigandMPNN /tmp/app \
   && cp -R /tmp/app /app \
   && printf "UpdateMethod=docker\nBranch=master\nPackageVersion=%s\nPackageAuthor=[RareCompute](https://github.com/RareCompute)\n" "${VERSION}" > /app/package_info \
   && chown -R ${UID}:${GID} /app && chmod -R 755 /app \
