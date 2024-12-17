@@ -47,6 +47,10 @@ RUN \
   # -----------------------------------
   # libibverbs1 librdmacm1 \
   # -----------------------------------
+  && curl -LsSf https://astral.sh/uv/0.5.6/install.sh | sh \
+  && . $HOME/.local/bin/env \
+  && uv venv --no-python-downloads /opt/venv \
+  && . /opt/venv/bin/activate \
   && case "${CHANNEL}" in \
   'stable') \
   curl -fsSL -o /tmp/app.zip "https://github.com/chaidiscovery/chai-lab/archive/refs/tags/v${VERSION}.zip" \
@@ -55,22 +59,20 @@ RUN \
   && cp -R /tmp/app/chai-lab-${VERSION}/assets /app \
   && cp -R /tmp/app/chai-lab-${VERSION}/examples /app \
   && cp -R /tmp/app/chai-lab-${VERSION}/tests /app \
+  && chown -R ${UID}:${GID} /app && chmod -R 755 /app \
+  && cd /tmp/app/chai-lab-${VERSION} \
   ;; \
   'develop') \
-  git clone https://github.com/amelie-iska/chai-lab.git /tmp/chai \
-  && cp -R /tmp/chai/LICENSE /app \
-  && cp -R /tmp/chai/assets /app \
-  && cp -R /tmp/chai/examples /app \
-  && cp -R /tmp/chai/tests /app \
+  git clone https://github.com/amelie-iska/chai-lab.git /tmp/app \
+  && cp -R /tmp/app/LICENSE /app \
+  && cp -R /tmp/app/assets /app \
+  && cp -R /tmp/app/examples /app \
+  && cp -R /tmp/app/tests /app \
+  && chown -R ${UID}:${GID} /app && chmod -R 755 /app \
+  && cd /tmp/app \
   ;; \
   esac \
   && printf "UpdateMethod=docker\nBranch=master\nPackageVersion=%s\nPackageAuthor=[RareCompute](https://github.com/RareCompute)\n" "${VERSION}" > /app/package_info \
-  && chown -R ${UID}:${GID} /app && chmod -R 755 /app \
-  && curl -LsSf https://astral.sh/uv/0.5.6/install.sh | sh \
-  && . $HOME/.local/bin/env \
-  && uv venv --no-python-downloads /opt/venv \
-  && . /opt/venv/bin/activate \
-  && cd /tmp/app/chai-lab-${VERSION} \
   && uv pip install -r /tmp/app/chai-lab-${VERSION}/requirements.in \
   && uv pip install . \
   && chown -R ${UID}:${GID} /opt/venv && chmod -R 755 /opt/venv \
