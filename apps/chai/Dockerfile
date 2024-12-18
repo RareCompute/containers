@@ -61,6 +61,7 @@ RUN \
   && cp -R /tmp/app/chai-lab-${VERSION}/tests /app \
   && chown -R ${UID}:${GID} /app && chmod -R 755 /app \
   && cd /tmp/app/chai-lab-${VERSION} \
+  && uv pip install -r /tmp/app/chai-lab-${VERSION}/requirements.in \
   ;; \
   'develop') \
   git clone https://github.com/amelie-iska/chai-lab.git /tmp/app \
@@ -69,11 +70,11 @@ RUN \
   && cp -R /tmp/app/examples /app \
   && cp -R /tmp/app/tests /app \
   && chown -R ${UID}:${GID} /app && chmod -R 755 /app \
+  && uv pip install -r /tmp/app/requirements.in \
   && cd /tmp/app \
   ;; \
   esac \
   && printf "UpdateMethod=docker\nBranch=master\nPackageVersion=%s\nPackageAuthor=[RareCompute](https://github.com/RareCompute)\n" "${VERSION}" > /app/package_info \
-  && uv pip install -r /tmp/app/chai-lab-${VERSION}/requirements.in \
   && uv pip install . \
   && chown -R ${UID}:${GID} /opt/venv && chmod -R 755 /opt/venv \
   && apt-get purge -y build-essential \

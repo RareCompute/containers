@@ -36,9 +36,9 @@ RUN \
   && apt-get update && apt-get install -y --no-install-recommends \
   curl unzip build-essential catatonit jq \
   gnupg ca-certificates lsb-release \
-  nano vim tree git \
+  nano vim tree git wget \
   && git clone https://github.com/dauparas/LigandMPNN /tmp/app \
-  && cp -R /tmp/app /app \
+  && cp -R /tmp/app/* /app \
   && printf "UpdateMethod=docker\nBranch=master\nPackageVersion=%s\nPackageAuthor=[RareCompute](https://github.com/RareCompute)\n" "${VERSION}" > /app/package_info \
   && chown -R ${UID}:${GID} /app && chmod -R 755 /app \
   && curl -LsSf https://astral.sh/uv/0.5.6/install.sh | sh \
@@ -54,10 +54,14 @@ RUN \
   && rm -rf /root/.cache /var/lib/apt/lists/* /tmp/* /var/tmp/* \
   && chsh -s /bin/bash
 
-COPY --chown=${UID}:${GID} ./apps/chai/entrypoint.sh /entrypoint.sh
+COPY --chown=${UID}:${GID} ./apps/ligandmpnn/entrypoint.sh /entrypoint.sh
 RUN chmod -R 755 /entrypoint.sh
 
 USER ${USERNAME}
+
+WORKDIR /model
+VOLUME ["/model"]
+
 WORKDIR /app
 
 ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]
