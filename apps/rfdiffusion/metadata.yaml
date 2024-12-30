@@ -1,0 +1,17 @@
+---
+#yamllint disable
+app: rfdiffusion
+semver: true
+channels:
+  - name: stable
+    platforms: ["linux/amd64"]
+    stable: true
+    tests:
+      enabled: false
+      type: cli
+  - name: develop
+    platforms: ["linux/amd64"]
+    stable: false
+    tests:
+      enabled: false
+      type: cli
