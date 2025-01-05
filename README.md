@@ -110,6 +110,8 @@ Container | Channel | Image
 [ligandmpnn](https://github.com/RareCompute/containers/pkgs/container/ligandmpnn) | stable | ghcr.io/RareCompute/ligandmpnn
 [protenix](https://github.com/RareCompute/containers/pkgs/container/protenix) | stable | ghcr.io/RareCompute/protenix
 [protenix-develop](https://github.com/RareCompute/containers/pkgs/container/protenix-develop) | develop | ghcr.io/RareCompute/protenix-develop
+[rfdiffusion](https://github.com/RareCompute/containers/pkgs/container/rfdiffusion) | stable | ghcr.io/RareCompute/rfdiffusion
+[rfdiffusion-develop](https://github.com/RareCompute/containers/pkgs/container/rfdiffusion-develop) | develop | ghcr.io/RareCompute/rfdiffusion-develop
 
 
 ## Deprecations
